@@ -17,6 +17,7 @@
             --ink-main: #4a3c2e;
             --ink-light: #7a6a5a;
             --accent-color: #f59e0b;
+            --base-font-size: 16px; /* Default base font size */
         }
         html {
             height: 100%;
@@ -31,6 +32,7 @@
             padding: 1rem;
             box-sizing: border-box;
             overflow: hidden;
+            font-size: var(--base-font-size);
         }
         .game-wrapper {
             height: 100%;
@@ -74,10 +76,14 @@
             z-index: 50;
             backdrop-filter: blur(4px);
         }
+        .modal-content {
+            max-width: 800px;
+            width: 90%;
+        }
         .btn {
             font-family: 'Gowun Dodum', sans-serif;
             border-radius: 0.375rem;
-            padding: 0.5rem 1rem;
+            padding: calc(var(--base-font-size) * 0.5) calc(var(--base-font-size) * 1);
             font-weight: bold;
             text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
             box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2), 0 2px 3px rgba(0,0,0,0.2);
@@ -85,7 +91,7 @@
             border: 1px solid rgba(0,0,0,0.2);
         }
          .btn-lg {
-            padding: 0.75rem 1.5rem;
+            padding: calc(var(--base-font-size) * 0.75) calc(var(--base-font-size) * 1.5);
         }
         .btn:active:not(:disabled) {
             transform: translateY(2px);
@@ -119,20 +125,51 @@
             height: 6.25rem; /* 100px */
             flex-shrink: 0;
         }
-        .story-entry-card .text-xs {
-            font-size: 0.8rem; /* 12.8px */
+        .story-entry-card .card-type {
+            font-size: 0.7rem; 
+            line-height: 1rem;
+        }
+        .story-entry-card .card-name {
+            font-size: 0.8rem;
             line-height: 1.1rem;
         }
+        .font-control-btn {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            background-color: var(--ink-light);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--ink-main);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .font-control-btn:hover {
+            background-color: var(--ink-main);
+        }
+        /* Font size classes based on CSS variable */
+        .text-size-h1 { font-size: calc(var(--base-font-size) * 2.5); }
+        .text-size-h2 { font-size: calc(var(--base-font-size) * 1.8); }
+        .text-size-h3 { font-size: calc(var(--base-font-size) * 1.5); }
+        .text-size-lg { font-size: calc(var(--base-font-size) * 1.15); }
+        .text-size-xl { font-size: calc(var(--base-font-size) * 1.25); }
+        .text-size-2xl { font-size: calc(var(--base-font-size) * 1.5); }
+        .text-size-story { font-size: calc(var(--base-font-size) * 1.4); }
+        .text-size-base { font-size: var(--base-font-size); }
+        .text-size-sm { font-size: calc(var(--base-font-size) * 0.875); }
     </style>
 </head>
 <body>
     <div class="game-wrapper">
         <!-- Start Screen / Rules -->
         <div id="start-screen" class="modal-backdrop">
-            <div class="modal-content">
-                <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center" style="font-family: 'Nanum Myeongjo', serif;">옛날옛적에 게임 규칙</h2>
-                <div class="rules space-y-3 text-stone-700 mb-8">
-                    <p>이 게임은 <strong>6명의 모둠원</strong>이 한 화면을 보고 함께 플레이하는 게임입니다.</p>
+            <div class="modal-content p-8">
+                <h2 class="text-size-2xl font-bold text-stone-800 mb-4 text-center" style="font-family: 'Nanum Myeongjo', serif;">옛날옛적에 게임 규칙</h2>
+                <div class="rules space-y-3 text-stone-700 mb-6 text-size-lg">
+                    <p>이 게임은 <strong>여러 모둠</strong>이 한 화면을 보고 함께 플레이하는 게임입니다.</p>
                     <ul class="space-y-2">
                         <li><strong>목표:</strong> '오늘의 결말' 카드로 이야기를 완성하고, 다른 모둠원들의 '수락'을 받아 승리하세요.</li>
                         <li><strong>게임 진행:</strong>
@@ -144,26 +181,43 @@
                             </ol>
                         </li>
                     </ul>
-                    <p class="text-center font-bold text-amber-700 mt-6">모두의 상상력을 합쳐 멋진 이야기를 만들어 보세요!</p>
                 </div>
-                <button id="start-game-button" class="w-full btn btn-lg btn-primary text-lg">이야기 시작하기</button>
+                <div class="mt-6 mb-8">
+                    <label for="team-count-select" class="block text-center text-size-lg font-bold mb-2">모둠 수 선택:</label>
+                    <select id="team-count-select" class="w-1/2 mx-auto block p-2 border-2 border-stone-400 rounded-lg text-size-lg focus:ring-2 focus:ring-amber-400 focus:outline-none bg-white">
+                        <option value="2">2모둠</option>
+                        <option value="3">3모둠</option>
+                        <option value="4">4모둠</option>
+                        <option value="5">5모둠</option>
+                        <option value="6" selected>6모둠</option>
+                    </select>
+                </div>
+                <button id="start-game-button" class="w-full btn btn-lg btn-primary text-size-lg">이야기 시작하기</button>
             </div>
         </div>
 
         <!-- Game Container -->
         <div id="game-container" class="hidden">
             <header class="text-center mb-4 flex-shrink-0">
-                <h1 class="text-5xl font-bold text-stone-800" style="font-family: 'Nanum Myeongjo', serif;">옛날 옛적에</h1>
+                <h1 class="text-size-h1 font-bold text-stone-800" style="font-family: 'Nanum Myeongjo', serif;">옛날 옛적에</h1>
             </header>
             <div class="grid grid-cols-12 gap-6 game-grid">
                 <!-- Left Side: Story -->
                 <main class="col-span-8 flex flex-col h-full min-h-0">
                     <div class="story-book-container p-6 lg:p-8 rounded-lg flex-grow flex flex-col h-full">
-                        <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-3 mb-4 text-stone-800 flex-shrink-0">이야기 책</h2>
-                        <div id="story-area" class="flex-grow overflow-y-auto pr-4 space-y-6 text-xl lg:text-2xl leading-relaxed"></div>
+                        <div class="flex justify-between items-center border-b-2 border-stone-300 pb-3 mb-4 flex-shrink-0">
+                            <h2 class="text-size-h2 font-bold text-stone-800">이야기 책</h2>
+                            <div id="font-controls" class="flex items-center gap-2">
+                                <span class="text-size-sm">글자 크기:</span>
+                                <button id="decrease-font-btn" class="font-control-btn">-</button>
+                                <button id="reset-font-btn" class="font-control-btn">⟲</button>
+                                <button id="increase-font-btn" class="font-control-btn">+</button>
+                            </div>
+                        </div>
+                        <div id="story-area" class="flex-grow overflow-y-auto pr-4 space-y-6 leading-relaxed"></div>
                         <div id="shared-ending-card-container" class="mt-4 pt-4 border-t-2 border-dashed border-stone-300 text-center flex-shrink-0">
-                            <h3 class="text-lg font-bold text-amber-800 mb-2">오늘의 결말</h3>
-                            <div id="ending-card" class="text-amber-900 p-2 bg-amber-100/50 rounded text-xl font-semibold"></div>
+                            <h3 class="text-size-lg font-bold text-amber-800 mb-2">오늘의 결말</h3>
+                            <div id="ending-card" class="text-amber-900 p-2 bg-amber-100/50 rounded text-size-xl font-semibold"></div>
                         </div>
                     </div>
                 </main>
@@ -171,13 +225,13 @@
                 <!-- Right Side: Game Info -->
                 <aside class="col-span-4 flex flex-col h-full min-h-0">
                     <div id="game-info-panel" class="info-panel p-6 rounded-lg w-full flex-grow flex flex-col">
-                        <h3 class="text-2xl font-bold text-stone-800 mb-4 border-b border-stone-300 pb-2 text-center flex-shrink-0" style="font-family: 'Nanum Myeongjo', serif;">게임 현황</h3>
-                        <div class="space-y-2 text-lg text-center mb-4 flex-shrink-0">
-                            <p>남은 카드 더미: <span id="deck-count" class="font-bold">0</span>장</p>
-                            <p>사용한 카드: <span id="played-card-count" class="font-bold">0</span>장</p>
-                        </div>
+                        <h3 class="text-size-h2 font-bold text-stone-800 mb-4 border-b border-stone-300 pb-2 text-center flex-shrink-0" style="font-family: 'Nanum Myeongjo', serif;">게임 현황</h3>
                         <div id="all-player-info-container" class="flex-grow overflow-y-auto space-y-3">
                             <!-- Player info will be injected here -->
+                        </div>
+                        <div class="space-y-2 text-size-lg text-center mt-4 pt-4 border-t border-stone-300 flex-shrink-0">
+                            <p>남은 카드 더미: <span id="deck-count" class="font-bold">0</span>장</p>
+                            <p>사용한 카드: <span id="played-card-count" class="font-bold">0</span>장</p>
                         </div>
                     </div>
                 </aside>
@@ -186,33 +240,33 @@
         
         <!-- Modals -->
         <div id="story-modal" class="modal-backdrop hidden">
-            <div class="modal-content">
-                <h3 class="text-2xl font-bold mb-4">이야기 만들기</h3>
-                <p class="mb-2">선택한 카드를 사용해 다음 문장을 만들어 보세요:</p>
+            <div class="modal-content p-8">
+                <h3 class="text-size-h3 font-bold mb-4">이야기 만들기</h3>
+                <p class="mb-2 text-size-lg">선택한 카드를 사용해 다음 문장을 만들어 보세요:</p>
                 <div id="selected-card-info" class="mb-4 p-3 bg-gray-100 rounded-md font-bold text-center"></div>
-                <textarea id="story-input" class="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                <textarea id="story-input" class="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-amber-400 focus:outline-none text-size-xl"></textarea>
                 <div class="flex justify-end mt-4 space-x-2">
-                    <button id="cancel-story-button" class="btn btn-secondary">취소</button>
-                    <button id="submit-story-button" class="btn btn-primary">제출하기</button>
+                    <button id="cancel-story-button" class="btn btn-secondary text-size-base">취소</button>
+                    <button id="submit-story-button" class="btn btn-primary text-size-base">제출하기</button>
                 </div>
             </div>
         </div>
 
         <div id="validation-modal" class="modal-backdrop hidden">
-            <div class="modal-content text-center">
-                <h3 id="validation-title" class="text-3xl font-bold mb-4 text-amber-700" style="font-family: 'Nanum Myeongjo', serif;"></h3>
-                <p id="proposer-announcement" class="mb-4 text-lg"></p>
+            <div class="modal-content p-8 text-center">
+                <h3 id="validation-title" class="text-size-2xl font-bold mb-4 text-amber-700" style="font-family: 'Nanum Myeongjo', serif;"></h3>
+                <p id="proposer-announcement" class="mb-4 text-size-lg"></p>
                 <div id="validation-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
-                <p class="mb-6 font-semibold">이 이야기에 동의하시나요?</p>
+                <p class="mb-6 font-semibold text-size-lg">이 이야기에 동의하시나요?</p>
                 <div class="flex justify-center gap-4">
-                    <button id="reject-button" class="btn btn-lg btn-reject">기각</button>
-                    <button id="accept-button" class="btn btn-lg btn-accept">수락</button>
+                    <button id="reject-button" class="btn btn-lg btn-reject text-size-lg">기각</button>
+                    <button id="accept-button" class="btn btn-lg btn-accept text-size-lg">수락</button>
                 </div>
             </div>
         </div>
 
         <div id="win-modal" class="modal-backdrop hidden">
-            <div class="modal-content text-center">
+            <div class="modal-content p-8 text-center">
                 <h3 class="text-4xl font-bold mb-4 text-amber-600" style="font-family: 'Nanum Myeongjo', serif;">🎉 이야기 완성! 🎉</h3>
                 <p id="winner-announcement" class="mb-6 text-xl"></p>
                 <div id="final-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
@@ -225,6 +279,7 @@
         // DOM Elements
         const startScreen = document.getElementById('start-screen'),
             startGameBtn = document.getElementById('start-game-button'),
+            teamCountSelect = document.getElementById('team-count-select'),
             gameContainer = document.getElementById('game-container'),
             storyArea = document.getElementById('story-area'),
             deckCountEl = document.getElementById('deck-count'),
@@ -245,20 +300,24 @@
             winModal = document.getElementById('win-modal'),
             winnerAnnouncement = document.getElementById('winner-announcement'),
             finalStoryPreview = document.getElementById('final-story-preview'),
-            playAgainButton = document.getElementById('play-again-button');
+            playAgainButton = document.getElementById('play-again-button'),
+            decreaseFontBtn = document.getElementById('decrease-font-btn'),
+            resetFontBtn = document.getElementById('reset-font-btn'),
+            increaseFontBtn = document.getElementById('increase-font-btn');
 
         // Card Data
         const STORY_CARDS = [ { name: "왕자", type: "인물", icon: "🤴" }, { name: "공주", type: "인물", icon: "👸" }, { name: "마녀", type: "인물", icon: "🧙‍♀️" }, { name: "용", type: "인물", icon: "🐉" }, { name: "기사", type: "인물", icon: "🛡️" }, { name: "요정", type: "인물", icon: "🧚‍♀️" }, { name: "왕", type: "인물", icon: "👑" }, { name: "여왕", type: "인물", icon: "👸" }, { name: "동물 조력자", type: "인물", icon: "🐕" }, { name: "거인", type: "인물", icon: "👹" }, { name: "난쟁이", type: "인물", icon: "👨‍🌾" }, { name: "마법사", type: "인물", icon: "🧙‍♂️" }, { name: "사냥꾼", type: "인물", icon: "🏹" }, { name: "현자", type: "인물", icon: "👴" }, { name: "괴물", type: "인물", icon: "👾" }, { name: "유령", type: "인물", icon: "👻" }, { name: "해적", type: "인물", icon: "🏴‍☠️" }, { name: "음유시인", type: "인물", icon: "🎶" }, { name: "도둑", type: "인물", icon: "🏃" }, { name: "공주", type: "인물", icon: "👸" }, { name: "숲", type: "장소", icon: "🌲" }, { name: "성", type: "장소", icon: "🏰" }, { name: "동굴", type: "장소", icon: "🦇" }, { name: "마을", type: "장소", icon: "🏘️" }, { name: "탑", type: "장소", icon: "🗼" }, { name: "강", type: "장소", icon: "🏞️" }, { name: "시장", type: "장소", icon: "🛒" }, { name: "다리", type: "장소", icon: "🌉" }, { name: "바다", type: "장소", icon: "🌊" }, { name: "사막", type: "장소", icon: "🏜️" }, { name: "폐허", type: "장소", icon: "🏚️" }, { name: "미궁", type: "장소", icon: "🌀" }, { name: "폭포", type: "장소", icon: "🌊" }, { name: "산", type: "장소", icon: "⛰️" }, { name: "섬", type: "장소", icon: "🏝️" }, { name: "마법 지팡이", type: "사물", icon: "🪄" }, { name: "검", type: "사물", icon: "⚔️" }, { name: "지도", type: "사물", icon: "🗺️" }, { name: "보물", type: "사물", icon: "💎" }, { name: "열쇠", type: "사물", icon: "🔑" }, { name: "물약", type: "사물", icon: "🧪" }, { name: "반지", type: "사물", icon: "💍" }, { name: "거울", type: "사물", icon: "🪞" }, { name: "망토", type: "사물", icon: "🧥" }, { name: "왕관", type: "사물", icon: "👑" }, { name: "독약", type: "사물", icon: "☠️" }, { name: "주문서", type: "사물", icon: "📜" }, { name: "나침반", type: "사물", icon: "🧭" }, { name: "가면", type: "사물", icon: "🎭" }, { name: "보석", type: "사물", icon: "💍" }, { name: "배", type: "사물", icon: "⛵" }, { name: "상자", type: "사물", icon: "📦" }, { name: "램프", type: "사물", icon: "💡" }, { name: "책", type: "사물", icon: "📖" }, { name: "활", type: "사물", icon: "🏹" }, { name: "행복하게", type: "상태", icon: "😊" }, { name: "슬프게", type: "상태", icon: "😢" }, { name: "용감하게", type: "상태", icon: "💪" }, { name: "신비롭게", type: "상태", icon: "✨" }, { name: "비밀스럽게", type: "상태", icon: "🤫" }, { name: "영원히", type: "상태", icon: "♾️" }, { name: "운명처럼", type: "상태", icon: "💫" }, { name: "저주받은", type: "상태", icon: "💀" }, { name: "축복받은", type: "상태", icon: "🌟" }, { name: "숨겨진", type: "상태", icon: "🚪" }, { name: "배고픈", type: "상태", icon: "😋" }, { name: "아름다운", type: "상태", icon: "😍" }, { name: "무서운", type: "상태", icon: "😱" }, { name: "부유한", type: "상태", icon: "💰" }, { name: "가난한", type: "상태", icon: "😟" }, { name: "갑자기", type: "사건", icon: "⚡️" }, { name: "오래 전", type: "사건", icon: "📜" }, { name: "위험에 빠졌다", type: "사건", icon: "🔥" }, { name: "여행을 떠났다", type: "사건", icon: "🚶‍♂️" }, { name: "잠이 들었다", type: "사건", icon: "😴" }, { name: "함정에 빠졌다", type: "사건", icon: "🕳️" }, { name: "변신했다", type: "사건", icon: "🦋" }, { name: "싸웠다", type: "사건", icon: "💥" }, { name: "도망쳤다", type: "사건", icon: "💨" }, { name: "축제가 열렸다", type: "사건", icon: "🎉" }, { name: "결혼했다", type: "사건", icon: "💒" }, { name: "길을 잃었다", type: "사건", icon: "❓" }, { name: "만났다", type: "사건", icon: "🤝" }, { name: "헤어졌다", type: "사건", icon: "💔" }, { name: "발견했다", type: "사건", icon: "💡" } ];
         const ENDING_CARDS = [ "그리고 모두는 행복하게 살았답니다.", "그리하여 왕국에는 평화가 찾아왔습니다.", "하지만 놀랍게도, 그 모든 것은 꿈이었습니다.", "그 용감한 행동은 전설로 남아 영원히 기억되었습니다.", "그리고 마법은 풀렸지만, 더 소중한 것을 얻었습니다.", "그 후로 아무도 그들의 소식을 들을 수 없었습니다.", "마침내 오랫동안 찾아 헤매던 것을 발견했습니다.", "그러나 그들의 모험은 이제 막 시작일 뿐이었습니다.", "모든 비밀이 밝혀지고 새로운 시대가 열렸습니다.", "그리하여 예언은 마침내 실현되었습니다.", "결국, 그들은 원래 있던 곳으로 돌아갔습니다." ];
 
         let gameState = {};
+        let baseFontSize = 18; // Initial base font size in pixels
 
-        function initGameState() {
+        function initGameState(teamCount) {
             const storyDeck = shuffle([...STORY_CARDS]);
             const endingDeck = shuffle([...ENDING_CARDS]);
             
             const players = [];
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= teamCount; i++) {
                 players.push({
                     name: `${i}모둠`,
                     hand: storyDeck.splice(0, 5)
@@ -280,24 +339,30 @@
         }
 
         function startGame() {
+            const teamCount = parseInt(teamCountSelect.value, 10);
             startScreen.classList.add('hidden');
             gameContainer.classList.remove('hidden');
-            initGameState();
+            initGameState(teamCount);
+            updateBaseFontSize();
             render();
+        }
+
+        function updateBaseFontSize() {
+            document.documentElement.style.setProperty('--base-font-size', `${baseFontSize}px`);
         }
 
         function renderStory(storyArray, container) {
             container.innerHTML = storyArray.map(entry => {
                 if (entry.type === 'start') {
-                    return `<p class="text-center font-bold">${entry.text}</p>`;
+                    return `<p class="text-center font-bold text-size-xl">${entry.text}</p>`;
                 }
                 if (entry.type === 'entry') {
                     return `
                         <div class="flex items-start gap-4">
                             ${createCardElement(entry.card, true, -1, 'story-entry-card').outerHTML}
                             <div>
-                                <p class="font-bold text-base text-stone-500">${entry.player}님의 이야기</p>
-                                <p>${entry.text}</p>
+                                <p class="font-bold text-size-base text-stone-500">${entry.player}님의 이야기</p>
+                                <p class="text-size-story">${entry.text}</p>
                             </div>
                         </div>
                     `;
@@ -305,8 +370,8 @@
                  if (entry.type === 'ending') {
                     return `
                         <div class="p-4 text-center bg-amber-100/50 rounded-lg border-2 border-amber-300">
-                            <p class="font-bold text-base text-stone-500">${entry.player}님이 이야기를 마무리했습니다.</p>
-                            <p class="text-2xl font-bold text-amber-700">${entry.text}</p>
+                            <p class="font-bold text-size-base text-stone-500">${entry.player}님이 이야기를 마무리했습니다.</p>
+                            <p class="text-size-2xl font-bold text-amber-700">${entry.text}</p>
                         </div>
                     `;
                 }
@@ -340,15 +405,15 @@
                 if (isCurrentPlayer) {
                     buttonsHtml = `
                         <div class="flex gap-2 mt-3">
-                            <button class="play-ending-button w-1/2 btn btn-primary text-xs">결말 내기</button>
-                            <button class="end-turn-button w-1/2 btn btn-secondary text-xs">차례 끝내기</button>
+                            <button class="play-ending-button w-1/2 btn btn-primary text-size-sm">결말 내기</button>
+                            <button class="end-turn-button w-1/2 btn btn-secondary text-size-sm">차례 끝내기</button>
                         </div>
                     `;
                 }
 
                 playerDiv.innerHTML = `
-                    <h4 class="font-bold text-lg text-center ${isCurrentPlayer ? 'text-amber-700' : ''}">${player.name} (${player.hand.length}장) ${isCurrentPlayer ? '→' : ''}</h4>
-                    <div class="text-lg text-stone-600 mt-2 text-center leading-relaxed">${cardsHtml || '카드가 없습니다.'}</div>
+                    <h4 class="font-bold text-size-lg text-center ${isCurrentPlayer ? 'text-amber-700' : ''}">${player.name} (${player.hand.length}장) ${isCurrentPlayer ? '→' : ''}</h4>
+                    <div class="text-size-2xl text-stone-600 mt-2 text-center leading-relaxed">${cardsHtml || '카드가 없습니다.'}</div>
                     ${buttonsHtml}
                 `;
                 allPlayerInfoContainer.appendChild(playerDiv);
@@ -393,6 +458,7 @@
             
             const tempStory = [...gameState.story, { type: 'entry', player: currentPlayer.name, text: gameState.activeText, card: gameState.activeCard }];
             renderStory(tempStory, validationStoryPreview);
+            validationStoryPreview.scrollTop = validationStoryPreview.scrollHeight;
             
             validationModal.classList.remove('hidden');
         }
@@ -416,6 +482,7 @@
             
             const finalStory = [...gameState.story, { type: 'ending', player: currentPlayer.name, text: gameState.sharedEndingCard }];
             renderStory(finalStory, validationStoryPreview);
+            validationStoryPreview.scrollTop = validationStoryPreview.scrollHeight;
             
             validationModal.classList.remove('hidden');
         }
@@ -470,9 +537,9 @@
             el.className = `card w-24 h-36 p-2 flex flex-col justify-between items-center ${isDisabled ? 'disabled' : ''} ${extraClasses}`;
             el.dataset.cardIndex = cardIndex;
             el.innerHTML = `
-                <div class="text-xs font-bold px-2 py-0.5 bg-stone-200 text-stone-600 rounded-full">${card.type}</div>
+                <div class="card-type text-xs font-bold px-2 py-0.5 bg-stone-200 text-stone-600 rounded-full">${card.type}</div>
                 <div class="text-5xl my-1 flex-grow flex items-center">${card.icon}</div>
-                <div class="text-center text-sm font-semibold text-stone-800">${card.name}</div>
+                <div class="card-name text-center text-sm font-semibold text-stone-800">${card.name}</div>
             `;
             return el;
         }
@@ -497,6 +564,19 @@
             gameContainer.classList.add('hidden');
             startScreen.classList.remove('hidden');
         });
+        decreaseFontBtn.addEventListener('click', () => {
+            baseFontSize = Math.max(12, baseFontSize - 1);
+            updateBaseFontSize();
+        });
+        increaseFontBtn.addEventListener('click', () => {
+            baseFontSize = Math.min(24, baseFontSize + 1);
+            updateBaseFontSize();
+        });
+        resetFontBtn.addEventListener('click', () => {
+            baseFontSize = 18;
+            updateBaseFontSize();
+        });
+
     </script>
 </body>
 </html>
