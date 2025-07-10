@@ -18,15 +18,33 @@
             --ink-light: #7a6a5a;
             --accent-color: #f59e0b;
         }
-        html, body {
+        html {
             height: 100%;
-            overflow: hidden;
         }
         body {
             font-family: 'Gowun Dodum', sans-serif;
             background-color: var(--parchment-bg);
             background-image: var(--parchment-texture);
             color: var(--ink-main);
+            height: 100%;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .game-wrapper {
+            height: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .game-grid {
+            flex-grow: 1;
+            min-height: 0;
         }
         .story-book-container, .modal-content, .info-panel, .card {
             background-color: var(--paper-bg);
@@ -97,105 +115,109 @@
             background-color: #fef3c7;
         }
         .story-entry-card {
-            width: 4rem; /* 64px */
-            height: 5.5rem; /* 88px */
+            width: 4.5rem; /* 72px */
+            height: 6.25rem; /* 100px */
             flex-shrink: 0;
+        }
+        .story-entry-card .text-xs {
+            font-size: 0.8rem; /* 12.8px */
+            line-height: 1.1rem;
         }
     </style>
 </head>
-<body class="p-4 md:p-6 lg:p-8">
-
-    <!-- Start Screen / Rules -->
-    <div id="start-screen" class="modal-backdrop">
-        <div class="modal-content">
-            <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center" style="font-family: 'Nanum Myeongjo', serif;">옛날옛적에 게임 규칙</h2>
-            <div class="rules space-y-3 text-stone-700 mb-8">
-                <p>이 게임은 <strong>6명의 모둠원</strong>이 한 화면을 보고 함께 플레이하는 게임입니다.</p>
-                <ul class="space-y-2">
-                    <li><strong>목표:</strong> '오늘의 결말' 카드로 이야기를 완성하고, 다른 모둠원들의 '수락'을 받아 승리하세요.</li>
-                    <li><strong>게임 진행:</strong>
-                        <ol class="list-decimal pl-5 mt-1 space-y-1">
-                            <li>자기 차례에 카드를 내고 이야기를 만들면, 다른 모둠원들이 '수락/기각' 투표를 합니다.</li>
-                            <li><strong>기각</strong>되면 카드는 손으로 돌아오고 즉시 차례가 넘어갑니다.</li>
-                            <li><strong>수락</strong>되면 이야기가 이어지고, 카드를 더 내거나 '차례 끝내기'를 선택할 수 있습니다.</li>
-                            <li>'차례 끝내기'를 누르면 카드 더미에서 <strong>새 카드 한 장</strong>을 받고 턴이 넘어갑니다.</li>
-                            <li>자기 차례라면 언제든 '결말 카드 내기'를 시도할 수 있습니다. (이 또한 투표를 거칩니다)</li>
-                        </ol>
-                    </li>
-                </ul>
-                <p class="text-center font-bold text-amber-700 mt-6">모두의 상상력을 합쳐 멋진 이야기를 만들어 보세요!</p>
+<body>
+    <div class="game-wrapper">
+        <!-- Start Screen / Rules -->
+        <div id="start-screen" class="modal-backdrop">
+            <div class="modal-content">
+                <h2 class="text-3xl font-bold text-stone-800 mb-4 text-center" style="font-family: 'Nanum Myeongjo', serif;">옛날옛적에 게임 규칙</h2>
+                <div class="rules space-y-3 text-stone-700 mb-8">
+                    <p>이 게임은 <strong>6명의 모둠원</strong>이 한 화면을 보고 함께 플레이하는 게임입니다.</p>
+                    <ul class="space-y-2">
+                        <li><strong>목표:</strong> '오늘의 결말' 카드로 이야기를 완성하고, 다른 모둠원들의 '수락'을 받아 승리하세요.</li>
+                        <li><strong>게임 진행:</strong>
+                            <ol class="list-decimal pl-5 mt-1 space-y-1">
+                                <li>자기 차례에 카드를 내고 이야기를 만들면, 다른 모둠원들이 '수락/기각' 투표를 합니다.</li>
+                                <li><strong>기각</strong>되면 카드는 손으로 돌아오고 즉시 차례가 넘어갑니다. (결말 카드 포함)</li>
+                                <li><strong>수락</strong>되면 이야기가 이어지고, 카드를 더 내거나 '차례 끝내기'를 선택할 수 있습니다.</li>
+                                <li>'차례 끝내기'를 누르면 카드 더미에서 <strong>새 카드 한 장</strong>을 받고 턴이 넘어갑니다.</li>
+                            </ol>
+                        </li>
+                    </ul>
+                    <p class="text-center font-bold text-amber-700 mt-6">모두의 상상력을 합쳐 멋진 이야기를 만들어 보세요!</p>
+                </div>
+                <button id="start-game-button" class="w-full btn btn-lg btn-primary text-lg">이야기 시작하기</button>
             </div>
-            <button id="start-game-button" class="w-full btn btn-lg btn-primary text-lg">이야기 시작하기</button>
         </div>
-    </div>
 
-    <!-- Game Container -->
-    <div id="game-container" class="max-w-screen-2xl mx-auto hidden h-full">
-        <div class="grid grid-cols-12 gap-6 h-full">
-            <!-- Left Side: Story -->
-            <div class="col-span-8 flex flex-col h-full">
-                <header class="text-center mb-4 flex-shrink-0">
-                    <h1 class="text-5xl font-bold text-stone-800" style="font-family: 'Nanum Myeongjo', serif;">옛날 옛적에</h1>
-                </header>
-                <main class="story-book-container p-6 lg:p-8 rounded-lg flex-grow flex flex-col">
-                    <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-3 mb-4 text-stone-800">이야기 책</h2>
-                    <div id="story-area" class="flex-grow overflow-y-auto pr-4 space-y-6 text-xl lg:text-2xl leading-relaxed"></div>
-                    <div id="shared-ending-card-container" class="mt-4 pt-4 border-t-2 border-dashed border-stone-300 text-center">
-                        <h3 class="text-lg font-bold text-amber-800 mb-2">오늘의 결말</h3>
-                        <div id="ending-card" class="text-amber-900 p-2 bg-amber-100/50 rounded text-xl font-semibold"></div>
+        <!-- Game Container -->
+        <div id="game-container" class="hidden">
+            <header class="text-center mb-4 flex-shrink-0">
+                <h1 class="text-5xl font-bold text-stone-800" style="font-family: 'Nanum Myeongjo', serif;">옛날 옛적에</h1>
+            </header>
+            <div class="grid grid-cols-12 gap-6 game-grid">
+                <!-- Left Side: Story -->
+                <main class="col-span-8 flex flex-col h-full min-h-0">
+                    <div class="story-book-container p-6 lg:p-8 rounded-lg flex-grow flex flex-col h-full">
+                        <h2 class="text-3xl font-bold border-b-2 border-stone-300 pb-3 mb-4 text-stone-800 flex-shrink-0">이야기 책</h2>
+                        <div id="story-area" class="flex-grow overflow-y-auto pr-4 space-y-6 text-xl lg:text-2xl leading-relaxed"></div>
+                        <div id="shared-ending-card-container" class="mt-4 pt-4 border-t-2 border-dashed border-stone-300 text-center flex-shrink-0">
+                            <h3 class="text-lg font-bold text-amber-800 mb-2">오늘의 결말</h3>
+                            <div id="ending-card" class="text-amber-900 p-2 bg-amber-100/50 rounded text-xl font-semibold"></div>
+                        </div>
                     </div>
                 </main>
-            </div>
 
-            <!-- Right Side: Game Info -->
-            <aside class="col-span-4 flex flex-col h-full">
-                <div id="game-info-panel" class="info-panel p-6 rounded-lg w-full flex-grow flex flex-col">
-                    <h3 class="text-2xl font-bold text-stone-800 mb-4 border-b border-stone-300 pb-2 text-center" style="font-family: 'Nanum Myeongjo', serif;">게임 현황</h3>
-                    <div class="space-y-2 text-lg text-center mb-4">
-                        <p>남은 카드 더미: <span id="deck-count" class="font-bold">0</span>장</p>
-                        <p>사용한 카드: <span id="played-card-count" class="font-bold">0</span>장</p>
+                <!-- Right Side: Game Info -->
+                <aside class="col-span-4 flex flex-col h-full min-h-0">
+                    <div id="game-info-panel" class="info-panel p-6 rounded-lg w-full flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-stone-800 mb-4 border-b border-stone-300 pb-2 text-center flex-shrink-0" style="font-family: 'Nanum Myeongjo', serif;">게임 현황</h3>
+                        <div class="space-y-2 text-lg text-center mb-4 flex-shrink-0">
+                            <p>남은 카드 더미: <span id="deck-count" class="font-bold">0</span>장</p>
+                            <p>사용한 카드: <span id="played-card-count" class="font-bold">0</span>장</p>
+                        </div>
+                        <div id="all-player-info-container" class="flex-grow overflow-y-auto space-y-3">
+                            <!-- Player info will be injected here -->
+                        </div>
                     </div>
-                    <div id="all-player-info-container" class="flex-grow overflow-y-auto space-y-3">
-                        <!-- Player info will be injected here -->
-                    </div>
+                </aside>
+            </div>
+        </div>
+        
+        <!-- Modals -->
+        <div id="story-modal" class="modal-backdrop hidden">
+            <div class="modal-content">
+                <h3 class="text-2xl font-bold mb-4">이야기 만들기</h3>
+                <p class="mb-2">선택한 카드를 사용해 다음 문장을 만들어 보세요:</p>
+                <div id="selected-card-info" class="mb-4 p-3 bg-gray-100 rounded-md font-bold text-center"></div>
+                <textarea id="story-input" class="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
+                <div class="flex justify-end mt-4 space-x-2">
+                    <button id="cancel-story-button" class="btn btn-secondary">취소</button>
+                    <button id="submit-story-button" class="btn btn-primary">제출하기</button>
                 </div>
-            </aside>
-        </div>
-    </div>
-    
-    <!-- Modals -->
-    <div id="story-modal" class="modal-backdrop hidden">
-        <div class="modal-content">
-            <h3 class="text-2xl font-bold mb-4">이야기 만들기</h3>
-            <p class="mb-2">선택한 카드를 사용해 다음 문장을 만들어 보세요:</p>
-            <div id="selected-card-info" class="mb-4 p-3 bg-gray-100 rounded-md font-bold text-center"></div>
-            <textarea id="story-input" class="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-amber-400 focus:outline-none"></textarea>
-            <div class="flex justify-end mt-4 space-x-2">
-                <button id="cancel-story-button" class="btn btn-secondary">취소</button>
-                <button id="submit-story-button" class="btn btn-primary">제출하기</button>
             </div>
         </div>
-    </div>
 
-    <div id="validation-modal" class="modal-backdrop hidden">
-        <div class="modal-content text-center">
-            <h3 id="validation-title" class="text-3xl font-bold mb-4 text-amber-700" style="font-family: 'Nanum Myeongjo', serif;"></h3>
-            <p id="proposer-announcement" class="mb-4 text-lg"></p>
-            <div id="validation-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
-            <p class="mb-6 font-semibold">이 이야기에 동의하시나요?</p>
-            <div class="flex justify-center gap-4">
-                <button id="reject-button" class="btn btn-lg btn-reject">기각</button>
-                <button id="accept-button" class="btn btn-lg btn-accept">수락</button>
+        <div id="validation-modal" class="modal-backdrop hidden">
+            <div class="modal-content text-center">
+                <h3 id="validation-title" class="text-3xl font-bold mb-4 text-amber-700" style="font-family: 'Nanum Myeongjo', serif;"></h3>
+                <p id="proposer-announcement" class="mb-4 text-lg"></p>
+                <div id="validation-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
+                <p class="mb-6 font-semibold">이 이야기에 동의하시나요?</p>
+                <div class="flex justify-center gap-4">
+                    <button id="reject-button" class="btn btn-lg btn-reject">기각</button>
+                    <button id="accept-button" class="btn btn-lg btn-accept">수락</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="win-modal" class="modal-backdrop hidden">
-        <div class="modal-content text-center">
-            <h3 class="text-4xl font-bold mb-4 text-amber-600" style="font-family: 'Nanum Myeongjo', serif;">🎉 이야기 완성! 🎉</h3>
-            <p id="winner-announcement" class="mb-6 text-xl"></p>
-            <div id="final-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
-            <button id="play-again-button" class="w-full btn btn-lg btn-primary">새로운 이야기 만들기</button>
+        <div id="win-modal" class="modal-backdrop hidden">
+            <div class="modal-content text-center">
+                <h3 class="text-4xl font-bold mb-4 text-amber-600" style="font-family: 'Nanum Myeongjo', serif;">🎉 이야기 완성! 🎉</h3>
+                <p id="winner-announcement" class="mb-6 text-xl"></p>
+                <div id="final-story-preview" class="mb-6 p-4 bg-stone-50 rounded text-left h-64 overflow-y-auto" style="font-family: 'Nanum Myeongjo', serif;"></div>
+                <button id="play-again-button" class="w-full btn btn-lg btn-primary">새로운 이야기 만들기</button>
+            </div>
         </div>
     </div>
 
@@ -326,7 +348,7 @@
 
                 playerDiv.innerHTML = `
                     <h4 class="font-bold text-lg text-center ${isCurrentPlayer ? 'text-amber-700' : ''}">${player.name} (${player.hand.length}장) ${isCurrentPlayer ? '→' : ''}</h4>
-                    <div class="text-base text-stone-600 mt-2 text-center leading-relaxed">${cardsHtml || '카드가 없습니다.'}</div>
+                    <div class="text-lg text-stone-600 mt-2 text-center leading-relaxed">${cardsHtml || '카드가 없습니다.'}</div>
                     ${buttonsHtml}
                 `;
                 allPlayerInfoContainer.appendChild(playerDiv);
@@ -425,14 +447,14 @@
             
             if (gameState.validationType === 'story') {
                 alert('이야기가 기각되었습니다. 카드는 손으로 돌아가고 차례가 넘어갑니다.');
-                gameState.activeCard = null;
-                gameState.activeText = '';
-                endTurn();
             } else if (gameState.validationType === 'ending') {
                 alert('결말이 기각되었습니다. 차례가 넘어갑니다.');
-                gameState.status = 'playing';
-                endTurn();
             }
+            
+            gameState.activeCard = null;
+            gameState.activeText = '';
+            gameState.status = 'playing';
+            endTurn();
         }
 
         function shuffle(array) {
